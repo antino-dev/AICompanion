@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat – Robin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    .check-answer { display: none !important; }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Nunito', 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #e8ecf0;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 558px;
+      height: 680px;
+      background: #fff;
+      box-shadow: 0 12px 40px rgba(0,0,0,.13);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── App top bar (matches feed) ── */
+    .app-topbar {
+      background: #fff;
+      padding: 10px 16px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #dbdbdb;
+      flex-shrink: 0;
+    }
+
+    .app-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 22px;
+      background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.4;
+      padding-bottom: 2px;
+    }
+
+    .app-topbar-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #1a1d21;
+    }
+    .app-topbar-icons svg { display: block; }
+
+    /* ── DM sub-header ── */
+    .chat-header {
+      background: #fff;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #dbdbdb;
+      flex-shrink: 0;
+    }
+
+    .header-back {
+      color: #1a1d21;
+      font-size: 24px;
+      line-height: 1;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .header-avatar-ring {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+      flex-shrink: 0;
+    }
+
+    .header-avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: #f0f2f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .header-info { flex: 1; }
+    .header-name { font-size: 15px; font-weight: 800; color: #1a1d21; line-height: 1.2; }
+    .header-status { font-size: 12px; color: #8e8e8e; font-weight: 600; }
+
+    /* ── Messages area ── */
+    .chat-messages {
+      flex: 1;
+      padding: 12px 14px 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #fff;
+    }
+
+    .chat-messages::-webkit-scrollbar { width: 0; }
+
+    .time-divider {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8e8e8e;
+      padding: 8px 0 4px;
+    }
+
+    .message-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .message-row.user-row { justify-content: flex-end; }
+
+    .msg-avatar {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .message-bubble {
+      max-width: 68%;
+      padding: 10px 14px;
+      border-radius: 22px;
+      line-height: 1.5;
+      word-wrap: break-word;
+      font-size: 14.5px;
+      font-weight: 600;
+    }
+
+    .chatbot-message {
+      background: #efefef;
+      color: #1a1d21;
+      border-bottom-left-radius: 6px;
+    }
+
+    .user-message {
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      color: #ffffff;
+      border-bottom-right-radius: 6px;
+    }
+
+    /* ── Input bar ── */
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px 14px;
+      background: #fff;
+      border-top: 1px solid #dbdbdb;
+      flex-shrink: 0;
+    }
+
+    .input-wrap {
+      flex: 1;
+      background: #fff;
+      border: 1.5px solid #dbdbdb;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 8px;
+    }
+
+    .input-icon { color: #8e8e8e; font-size: 20px; flex-shrink: 0; }
+
+    .chat-input textarea {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 14.5px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 600;
+      color: #1a1d21;
+      outline: none;
+      resize: none;
+      overflow: hidden;
+      max-height: 100px;
+      line-height: 1.4;
+    }
+
+    .chat-input textarea::placeholder { color: #8e8e8e; font-weight: 600; }
+
+    .send-icon-btn {
+      background: none;
+      border: none;
+      font-size: 15px;
+      font-weight: 800;
+      color: #0095f6;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      font-family: 'Nunito', sans-serif;
+      transition: opacity .15s;
+    }
+
+    .send-icon-btn:hover { opacity: 0.7; }
+    .send-icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    #send-button { display: none; }
+
+    /* ── Typing indicator ── */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 16px;
+      min-width: 52px;
+    }
+
+    .typing-indicator span {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #8e8e8e;
+      display: inline-block;
+      animation: typing-bounce 1.2s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing-bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30%            { transform: translateY(-6px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+
+    <!-- App top bar -->
+    <div class="app-topbar">
+      <div class="app-logo">MindSpace</div>
+      <div class="app-topbar-icons">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- DM header -->
+    <div class="chat-header">
+      <span class="header-back">&#8249;</span>
+      <div class="header-avatar-ring">
+        <div class="header-avatar-inner">🌿</div>
+      </div>
+      <div class="header-info">
+        <div class="header-name">Robin</div>
+        <div class="header-status">Active now</div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chat-messages">
+      <div class="time-divider">Today</div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input">
+      <div class="input-wrap">
+        <span class="input-icon">😊</span>
+        <textarea id="user-input" rows="1" placeholder="Message…"></textarea>
+        <button class="send-icon-btn" id="send-icon-btn">Send</button>
+      </div>
+      <button id="send-button" style="display:none">Send</button>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput    = document.getElementById('user-input');
+    const sendButton   = document.getElementById('send-button');
+    const sendIconBtn  = document.getElementById('send-icon-btn');
+
+    const autosize = () => {
+      userInput.style.height = 'auto';
+      userInput.style.height = Math.min(userInput.scrollHeight, 120) + 'px';
+    };
+
+    const removeLegacyCheck = () => {
+      document.querySelectorAll('.check-answer').forEach(el => el.remove());
+    };
+
+    const conversation = [
+      { type: 'chatbot', text: "Hey! How are you doing today?" },
+      { type: 'user',    text: "Honestly, not great. I've just been feeling so overwhelmed lately. Like nothing I do is ever good enough." },
+      { type: 'chatbot', text: "That sounds really exhausting. But I want you to hear this: your imperfections aren't flaws. They're proof you're actually trying. Progress beats perfection every single time." },
+      { type: 'user',    text: "I guess. I just keep messing things up and I feel like everyone notices." },
+      { type: 'chatbot', text: "They really don't. Everyone's way too caught up in their own stuff to notice yours. You're allowed to be human, you know?" },
+      { type: 'user',    text: "I know, but it's hard to remember that when you're in the middle of it." },
+      { type: 'chatbot', text: "Totally. And honestly? Feeling overwhelmed makes complete sense. Your brain can only hold about 4 things in working memory at once. When everything piles up, that's not you being weak. That's just biology." },
+      { type: 'user',    text: "Wait, really? Only 4 things?" },
+      { type: 'chatbot', text: "Yep! So of course it feels like too much, because it literally is too much for any brain to hold. Oh, and here's something I love: doing something with your hands, like doodling, cooking, or even just folding laundry, actually quiets the part of your brain that overthinks. Your body already knows how to reset." },
+      { type: 'user',    text: "Huh. I never thought about it that way. That actually makes me feel less broken." },
+      { type: 'chatbot', text: "You're not broken at all. And here's one more that always gets me: humans are literally the only animals that choose to delay sleep. Every other creature just sleeps when it's tired. We invented lying awake worrying. Kind of wild when you think about it." },
+      { type: 'user',    text: "Okay that one made me laugh. That's so true though." },
+      { type: 'chatbot', text: "Right? Anyway, done is better than perfect. Seriously. Ship it, learn from it, move on. That's how actual growth happens. You don't have to have it all figured out." },
+      { type: 'user',    text: "Yeah. I needed to hear that today." },
+      { type: 'chatbot', text: "You're doing better than you think. I mean it." }
+    ];
+
+    let messageIndex     = 0;
+    let charIndex        = 0;
+    let typingInterval   = null;
+    let awaitingUserSend = false;
+    let isTyping         = false;
+
+    function createMessageRow(type) {
+      const row = document.createElement('div');
+      row.classList.add('message-row', type === 'user' ? 'user-row' : 'bot-row');
+
+      const bubble = document.createElement('div');
+      bubble.classList.add('message-bubble', type === 'chatbot' ? 'chatbot-message' : 'user-message');
+
+      if (type === 'chatbot') {
+        const avatarEl = document.createElement('div');
+        avatarEl.classList.add('msg-avatar');
+        avatarEl.textContent = 'R';
+        row.appendChild(avatarEl);
+        row.appendChild(bubble);
+      } else {
+        row.appendChild(bubble);
+      }
+
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return { row, contentEl: bubble };
+    }
+
+    function showChatbotMessage(msg, done) {
+      const { row: indicatorRow, contentEl: indicatorEl } = createMessageRow('chatbot');
+      indicatorEl.classList.add('typing-indicator');
+      indicatorEl.innerHTML = '<span></span><span></span><span></span>';
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      const delay = Math.min(1000 + msg.text.length, 2200);
+
+      isTyping = true;
+      if (sendIconBtn) sendIconBtn.disabled = true;
+
+      setTimeout(() => {
+        indicatorRow.remove();
+        const { contentEl } = createMessageRow('chatbot');
+        contentEl.innerHTML = msg.text.replace(/\n/g, '<br>');
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        isTyping = false;
+        if (sendIconBtn) sendIconBtn.disabled = false;
+        removeLegacyCheck();
+        if (done) done();
+      }, delay);
+    }
+
+    function typeUserPrompt(msg) {
+      userInput.value = '';
+      userInput.style.height = '80px';
+      userInput.style.overflowY = 'auto';
+      awaitingUserSend = true;
+      isTyping = true;
+      if (sendIconBtn) sendIconBtn.disabled = true;
+      charIndex = 0;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      typingInterval = setInterval(() => {
+        if (charIndex < msg.text.length) {
+          userInput.value += msg.text.charAt(charIndex);
+          charIndex++;
+          userInput.scrollTop = userInput.scrollHeight;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else {
+          clearInterval(typingInterval);
+          typingInterval = null;
+          isTyping = false;
+          if (sendIconBtn) sendIconBtn.disabled = false;
+        }
+      }, 35);
+    }
+
+    function disableInput() {
+      userInput.disabled = true;
+      userInput.placeholder = 'Conversation ended.';
+      if (sendIconBtn) sendIconBtn.disabled = true;
+      const wrap = document.querySelector('.chat-input .input-wrap');
+      if (wrap) wrap.style.opacity = '0.45';
+    }
+
+    function nextStep() {
+      if (messageIndex >= conversation.length) { disableInput(); return; }
+      const msg = conversation[messageIndex];
+      if (msg.type === 'chatbot') {
+        showChatbotMessage(msg, () => {
+          messageIndex++;
+          setTimeout(nextStep, 350);
+        });
+      } else {
+        typeUserPrompt(msg);
+      }
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text || isTyping) return;
+
+      const { contentEl } = createMessageRow('user');
+      contentEl.innerHTML = text.replace(/\n/g, '<br>');
+
+      userInput.value = '';
+      userInput.style.overflowY = 'hidden';
+      autosize();
+
+      if (awaitingUserSend && conversation[messageIndex]?.type === 'user') {
+        awaitingUserSend = false;
+        messageIndex++;
+        const hasMore = conversation.slice(messageIndex).some(m => m.type === 'chatbot' || m.type === 'user');
+        if (hasMore) { setTimeout(nextStep, 250); } else { disableInput(); }
+      } else {
+        while (conversation[messageIndex]?.type === 'user') messageIndex++;
+        if (messageIndex < conversation.length) { setTimeout(nextStep, 250); } else { disableInput(); }
+      }
+    }
+
+    if (sendIconBtn) sendIconBtn.addEventListener('click', sendMessage);
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('input', autosize);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    removeLegacyCheck();
+    autosize();
+    nextStep();
+  });
+  </script>
+</body>
+</html>

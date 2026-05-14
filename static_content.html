@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindSpace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Nunito', 'Segoe UI', sans-serif;
+      background: #e8ecf0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 32px 0 48px;
+    }
+
+    .page-wrap {
+      width: 100%;
+      max-width: 558px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .insta-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px 12px;
+      background: #fff;
+      border-bottom: 1px solid #dbdbdb;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      overflow: visible;
+    }
+
+    .insta-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 24px;
+      background: linear-gradient(90deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0;
+      line-height: 1.4;
+      padding-bottom: 2px;
+    }
+
+    .topbar-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #1a1d21;
+    }
+
+    .topbar-icons svg { display: block; }
+
+    /* ── Stories ── */
+    .stories-row {
+      background: #fff;
+      border-bottom: 1px solid #dbdbdb;
+      display: flex;
+      gap: 14px;
+      padding: 10px 14px;
+      overflow-x: auto;
+    }
+    .stories-row::-webkit-scrollbar { display: none; }
+
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .story-ring {
+      width: 58px; height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .story-ring.seen { background: #dbdbdb; }
+
+    .story-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 2.5px solid #fff;
+      background: #c9d6e3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      overflow: hidden;
+    }
+
+    .story-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #1a1d21;
+      max-width: 60px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── Post card ── */
+    .post-card {
+      background: #fff;
+      border-bottom: 1px solid #dbdbdb;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+    }
+
+    .post-avatar-ring {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+      flex-shrink: 0;
+    }
+
+    .post-avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .post-header-info { flex: 1; }
+    .post-username { font-size: 13.5px; font-weight: 800; color: #1a1d21; }
+    .post-location { font-size: 11px; color: #8e8e8e; font-weight: 600; }
+    .post-more { color: #1a1d21; font-size: 18px; letter-spacing: 2px; font-weight: 800; cursor: pointer; }
+
+    /* ── Post image / text card ── */
+    .post-image {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 32px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-image.emotional {
+      background: linear-gradient(160deg, #fff5e6 0%, #ffd4b8 50%, #ffb89a 100%);
+    }
+    .post-image.cognitive {
+      background: linear-gradient(160deg, #e8f4ff 0%, #b8d9f8 50%, #90c2f5 100%);
+    }
+
+    .post-image-emoji {
+      font-size: 48px;
+      margin-bottom: 12px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
+    }
+
+    .post-image-headline {
+      font-size: 20px;
+      font-weight: 800;
+      color: #1a1d21;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      letter-spacing: -0.2px;
+    }
+
+    .post-image-divider {
+      width: 36px;
+      height: 3px;
+      border-radius: 2px;
+      background: rgba(26,29,33,0.18);
+      margin-bottom: 14px;
+    }
+
+    .post-image-body {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2a2a2a;
+      text-align: center;
+      line-height: 1.7;
+      max-width: 360px;
+    }
+
+    /* Individual body paragraphs as pill chips */
+    .post-image-body .line {
+      display: block;
+      background: rgba(255,255,255,0.55);
+      border-radius: 14px;
+      padding: 9px 16px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      text-align: center;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .post-image-body .line:last-child { margin-bottom: 0; }
+
+    .post-image-tag {
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(26,29,33,0.28);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ── Action bar ── */
+    .post-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px 4px;
+    }
+
+    .action-icon {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      color: #1a1d21;
+      padding: 2px;
+    }
+    .action-icon svg { display: block; }
+    .action-icon.bookmark { margin-left: auto; }
+
+    .post-likes {
+      padding: 0 12px 4px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #1a1d21;
+    }
+
+    .post-caption {
+      padding: 0 12px 5px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1a1d21;
+      line-height: 1.5;
+    }
+    .post-caption .cap-username { font-weight: 800; }
+    .post-caption .cap-hashtags { color: #00376b; }
+
+    .post-comments {
+      padding: 0 12px 3px;
+      font-size: 13px;
+      color: #8e8e8e;
+      font-weight: 600;
+    }
+
+    .post-timestamp {
+      padding: 0 12px 10px;
+      font-size: 10px;
+      color: #8e8e8e;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .post-add-comment {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 12px 10px;
+      border-top: 1px solid #efefef;
+    }
+
+    .comment-avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: #c9d6e3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .comment-input-fake {
+      flex: 1;
+      font-size: 13.5px;
+      color: #8e8e8e;
+      font-weight: 600;
+    }
+
+    .comment-post-btn {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #0095f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <!-- Top bar -->
+    <div class="insta-topbar">
+      <div class="insta-logo">MindSpace</div>
+      <div class="topbar-icons">
+        <!-- Notification bell -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+        <!-- DM paper plane -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Stories -->
+    <div class="stories-row">
+      <div class="story-item">
+        <div class="story-ring"><div class="story-inner">🌱</div></div>
+        <span class="story-name">Your story</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring"><div class="story-inner">✨</div></div>
+        <span class="story-name">dailyboost</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring seen"><div class="story-inner">🧠</div></div>
+        <span class="story-name">brainbits</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring"><div class="story-inner">☀️</div></div>
+        <span class="story-name">morningmind</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring seen"><div class="story-inner">💬</div></div>
+        <span class="story-name">softlife</span>
+      </div>
+    </div>
+
+    <!-- POST 1: Emotional Support -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-avatar-ring"><div class="post-avatar-inner">✨</div></div>
+        <div class="post-header-info">
+          <div class="post-username">dailyboost</div>
+          <div class="post-location">For you</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+
+      <div class="post-image emotional">
+        <div class="post-image-emoji">🌿</div>
+        <div class="post-image-headline">Progress beats perfection every single time.</div>
+        <div class="post-image-divider"></div>
+        <div class="post-image-body">
+          <span class="line">Your imperfections aren't flaws. They're proof you're actually trying.</span>
+          <span class="line">That thing you messed up? Everyone else is too busy worrying about their own stuff to notice. You're allowed to be human.</span>
+          <span class="line">Done is better than perfect. Ship it, learn from it, move on. That's how actual growth happens.</span>
+        </div>
+        <div class="post-image-tag">mindset</div>
+      </div>
+
+      <div class="post-actions">
+        <!-- Heart -->
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </span>
+        <!-- Comment bubble -->
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <!-- Share / paper plane -->
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </span>
+        <!-- Bookmark -->
+        <span class="action-icon bookmark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="post-likes">14,302 likes</div>
+      <div class="post-caption">
+        <span class="cap-username">dailyboost</span> Reminder you didn't know you needed 🌿
+        <span class="cap-hashtags">#selfgrowth #progressnotperfection #mentalhealthmatters #burnout #youvegotthis</span>
+      </div>
+      <div class="post-comments">View all 847 comments</div>
+      <div class="post-timestamp">2 hours ago</div>
+      <div class="post-add-comment">
+        <div class="comment-avatar">🙂</div>
+        <span class="comment-input-fake">Add a comment…</span>
+        <span class="comment-post-btn">Post</span>
+      </div>
+    </div>
+
+    <!-- POST 2: Cognitive Support -->
+    <div class="post-card">
+      <div class="post-header">
+        <div class="post-avatar-ring"><div class="post-avatar-inner">🔬</div></div>
+        <div class="post-header-info">
+          <div class="post-username">brainbits</div>
+          <div class="post-location">For you</div>
+        </div>
+        <span class="post-more">···</span>
+      </div>
+
+      <div class="post-image cognitive">
+        <div class="post-image-emoji">🧠</div>
+        <div class="post-image-headline">Your brain is doing its best. Here's proof.</div>
+        <div class="post-image-divider"></div>
+        <div class="post-image-body">
+          <span class="line">Your brain can only hold about 4 things in working memory at once. Feeling overwhelmed? That's not weakness, that's just biology.</span>
+          <span class="line">Doing something with your hands, like doodling, cooking, or folding laundry, actually quiets the part of your brain that overthinks. Your body knows how to reset.</span>
+          <span class="line">Humans are the only animals that choose to delay sleep. Every other creature just sleeps when tired. We invented lying awake worrying. Proud of us.</span>
+        </div>
+        <div class="post-image-tag">psychology</div>
+      </div>
+
+      <div class="post-actions">
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </span>
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <span class="action-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </span>
+        <span class="action-icon bookmark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+      </div>
+
+      <div class="post-likes">21,847 likes</div>
+      <div class="post-caption">
+        <span class="cap-username">brainbits</span> Your brain isn't broken, it's just human 🔬
+        <span class="cap-hashtags">#psychologyfacts #brainfacts #mentalhealth #didyouknow #science</span>
+      </div>
+      <div class="post-comments">View all 1,203 comments</div>
+      <div class="post-timestamp">5 hours ago</div>
+      <div class="post-add-comment">
+        <div class="comment-avatar">🙂</div>
+        <span class="comment-input-fake">Add a comment…</span>
+        <span class="comment-post-btn">Post</span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
