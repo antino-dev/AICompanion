@@ -58,7 +58,6 @@
       gap: 16px;
       color: #1a1d21;
     }
-
     .topbar-icons svg { display: block; }
 
     /* ── Stories ── */
@@ -150,84 +149,151 @@
     .post-location { font-size: 11px; color: #8e8e8e; font-weight: 600; }
     .post-more { color: #1a1d21; font-size: 18px; letter-spacing: 2px; font-weight: 800; cursor: pointer; }
 
-    /* ── Post image / text card ── */
-    .post-image {
+    /* ── Carousel nav buttons ── */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.22);
+      z-index: 4;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s;
+    }
+
+    .carousel-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .carousel-btn:hover { background: rgba(255,255,255,1); }
+    .carousel-btn svg { display: block; }
+
+    .carousel-btn-prev { left: 10px; }
+    .carousel-btn-next { right: 10px; }
+
+    /* ── Carousel wrapper ── */
+    .carousel {
+      position: relative;
       width: 100%;
+    }
+
+    /* Page counter top-right (Instagram style) */
+    .carousel-counter {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: rgba(0,0,0,0.48);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 3px 9px;
+      z-index: 3;
+      pointer-events: none;
+      letter-spacing: 0.3px;
+    }
+
+    /* Horizontal scroll track */
+    .carousel-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    /* Each slide */
+    .carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      aspect-ratio: 1 / 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 28px 32px 32px;
+      padding: 32px 36px;
+      scroll-snap-align: start;
       position: relative;
-      overflow: hidden;
     }
 
-    .post-image.emotional {
+    .carousel-slide.emotional {
       background: linear-gradient(160deg, #fff5e6 0%, #ffd4b8 50%, #ffb89a 100%);
     }
-    .post-image.cognitive {
+    .carousel-slide.cognitive {
       background: linear-gradient(160deg, #e8f4ff 0%, #b8d9f8 50%, #90c2f5 100%);
     }
 
-    .post-image-emoji {
-      font-size: 48px;
-      margin-bottom: 12px;
+    /* Cover slide */
+    .slide-emoji {
+      font-size: 58px;
+      margin-bottom: 18px;
       line-height: 1;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.13));
     }
 
-    .post-image-headline {
-      font-size: 20px;
+    .slide-headline {
+      font-size: 24px;
       font-weight: 800;
       color: #1a1d21;
       text-align: center;
-      line-height: 1.3;
-      margin-bottom: 10px;
-      letter-spacing: -0.2px;
+      line-height: 1.35;
+      letter-spacing: -0.3px;
     }
 
-    .post-image-divider {
+    .slide-divider {
       width: 36px;
       height: 3px;
       border-radius: 2px;
       background: rgba(26,29,33,0.18);
-      margin-bottom: 14px;
+      margin: 18px auto 0;
     }
 
-    .post-image-body {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2a2a2a;
+    /* Content slides */
+    .slide-chip {
+      background: rgba(255,255,255,0.62);
+      border-radius: 20px;
+      padding: 30px 28px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       text-align: center;
-      line-height: 1.7;
-      max-width: 360px;
-    }
-
-    /* Individual body paragraphs as pill chips */
-    .post-image-body .line {
-      display: block;
-      background: rgba(255,255,255,0.55);
-      border-radius: 14px;
-      padding: 9px 16px;
-      margin-bottom: 8px;
-      backdrop-filter: blur(4px);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      text-align: center;
-      font-size: 13.5px;
-      line-height: 1.55;
-    }
-
-    .post-image-body .line:last-child { margin-bottom: 0; }
-
-    .post-image-tag {
-      position: absolute;
-      bottom: 10px;
-      right: 14px;
-      font-size: 10px;
+      font-size: 20px;
       font-weight: 700;
-      color: rgba(26,29,33,0.28);
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      color: #1a1d21;
+      line-height: 1.75;
+      max-width: 380px;
+    }
+
+    /* Dot indicators */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 0 4px;
+      background: #fff;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #dbdbdb;
+      transition: background 0.2s, transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .dot.active {
+      background: #0095f6;
+      transform: scale(1.15);
     }
 
     /* ── Action bar ── */
@@ -319,12 +385,10 @@
     <div class="insta-topbar">
       <div class="insta-logo">MindSpace</div>
       <div class="topbar-icons">
-        <!-- Notification bell -->
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
         </svg>
-        <!-- DM paper plane -->
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="22" y1="2" x2="11" y2="13"/>
           <polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -356,7 +420,7 @@
       </div>
     </div>
 
-    <!-- POST 1: Emotional Support -->
+    <!-- ══ POST 1: Emotional Support ══ -->
     <div class="post-card">
       <div class="post-header">
         <div class="post-avatar-ring"><div class="post-avatar-inner">✨</div></div>
@@ -367,46 +431,70 @@
         <span class="post-more">···</span>
       </div>
 
-      <div class="post-image emotional">
-        <div class="post-image-emoji">🌿</div>
-        <div class="post-image-headline">Progress beats perfection every single time.</div>
-        <div class="post-image-divider"></div>
-        <div class="post-image-body">
-          <span class="line">Your imperfections aren't flaws. They're proof you're actually trying.</span>
-          <span class="line">That thing you messed up? Everyone else is too busy worrying about their own stuff to notice. You're allowed to be human.</span>
-          <span class="line">Done is better than perfect. Ship it, learn from it, move on. That's how actual growth happens.</span>
+      <div class="carousel" id="carousel-1">
+        <div class="carousel-counter" id="counter-1">1 / 4</div>
+        <button class="carousel-btn carousel-btn-prev" id="prev-1" aria-label="Previous">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-btn carousel-btn-next visible" id="next-1" aria-label="Next">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="carousel-track" id="track-1">
+
+          <!-- Slide 1: Cover -->
+          <div class="carousel-slide emotional">
+            <div class="slide-emoji">🌿</div>
+            <div class="slide-headline">Progress beats perfection every single time.</div>
+            <div class="slide-divider"></div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-slide emotional">
+            <div class="slide-chip">Your imperfections<br>aren't flaws.<br>They're proof<br>you're actually trying.</div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="carousel-slide emotional">
+            <div class="slide-chip">That thing you messed up?<br>Everyone else is too busy<br>worrying about their own stuff.<br>You're allowed to be human.</div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="carousel-slide emotional">
+            <div class="slide-chip">Done is better than perfect.<br>Ship it, learn from it,<br>move on.<br>That's how growth happens.</div>
+          </div>
+
         </div>
-        <div class="post-image-tag">mindset</div>
+        <div class="carousel-dots" id="dots-1">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
       </div>
 
       <div class="post-actions">
-        <!-- Heart -->
         <span class="action-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </span>
-        <!-- Comment bubble -->
         <span class="action-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
         </span>
-        <!-- Share / paper plane -->
         <span class="action-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"/>
             <polygon points="22 2 15 22 11 13 2 9 22 2"/>
           </svg>
         </span>
-        <!-- Bookmark -->
         <span class="action-icon bookmark">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
           </svg>
         </span>
       </div>
-
       <div class="post-likes">14,302 likes</div>
       <div class="post-caption">
         <span class="cap-username">dailyboost</span> Reminder you didn't know you needed 🌿
@@ -421,7 +509,7 @@
       </div>
     </div>
 
-    <!-- POST 2: Cognitive Support -->
+    <!-- ══ POST 2: Cognitive Support ══ -->
     <div class="post-card">
       <div class="post-header">
         <div class="post-avatar-ring"><div class="post-avatar-inner">🔬</div></div>
@@ -432,16 +520,45 @@
         <span class="post-more">···</span>
       </div>
 
-      <div class="post-image cognitive">
-        <div class="post-image-emoji">🧠</div>
-        <div class="post-image-headline">Your brain is doing its best. Here's proof.</div>
-        <div class="post-image-divider"></div>
-        <div class="post-image-body">
-          <span class="line">Your brain can only hold about 4 things in working memory at once. Feeling overwhelmed? That's not weakness, that's just biology.</span>
-          <span class="line">Doing something with your hands, like doodling, cooking, or folding laundry, actually quiets the part of your brain that overthinks. Your body knows how to reset.</span>
-          <span class="line">Humans are the only animals that choose to delay sleep. Every other creature just sleeps when tired. We invented lying awake worrying. Proud of us.</span>
+      <div class="carousel" id="carousel-2">
+        <div class="carousel-counter" id="counter-2">1 / 4</div>
+        <button class="carousel-btn carousel-btn-prev" id="prev-2" aria-label="Previous">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="carousel-btn carousel-btn-next visible" id="next-2" aria-label="Next">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1a1d21" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="carousel-track" id="track-2">
+
+          <!-- Slide 1: Cover -->
+          <div class="carousel-slide cognitive">
+            <div class="slide-emoji">🧠</div>
+            <div class="slide-headline">Your brain is doing its best. Here's proof.</div>
+            <div class="slide-divider"></div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="carousel-slide cognitive">
+            <div class="slide-chip">Your brain can only hold<br>about 4 things at once.<br>Feeling overwhelmed?<br>That's not weakness.<br>That's just biology.</div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="carousel-slide cognitive">
+            <div class="slide-chip">Doing something with your hands<br>quiets the part of your brain<br>that overthinks.<br>Doodle. Cook. Fold laundry.<br>Your body knows how to reset.</div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="carousel-slide cognitive">
+            <div class="slide-chip">Humans are the only animals<br>that choose to delay sleep.<br>Every other creature just sleeps<br>when tired. We invented<br>lying awake worrying.</div>
+          </div>
+
         </div>
-        <div class="post-image-tag">psychology</div>
+        <div class="carousel-dots" id="dots-2">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
       </div>
 
       <div class="post-actions">
@@ -467,7 +584,6 @@
           </svg>
         </span>
       </div>
-
       <div class="post-likes">21,847 likes</div>
       <div class="post-caption">
         <span class="cap-username">brainbits</span> Your brain isn't broken, it's just human 🔬
@@ -483,5 +599,47 @@
     </div>
 
   </div>
+
+  <script>
+    function initCarousel(trackId, dotsId, counterId, prevId, nextId, total) {
+      const track   = document.getElementById(trackId);
+      const dotsEl  = document.getElementById(dotsId);
+      const counter = document.getElementById(counterId);
+      const prevBtn = document.getElementById(prevId);
+      const nextBtn = document.getElementById(nextId);
+      const dots    = dotsEl.querySelectorAll('.dot');
+
+      function getIndex() {
+        return Math.round(track.scrollLeft / track.clientWidth);
+      }
+
+      function updateUI(index) {
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        counter.textContent = `${index + 1} / ${total}`;
+        prevBtn.classList.toggle('visible', index > 0);
+        nextBtn.classList.toggle('visible', index < total - 1);
+      }
+
+      track.addEventListener('scroll', () => {
+        updateUI(getIndex());
+      }, { passive: true });
+
+      prevBtn.addEventListener('click', () => {
+        const i = getIndex();
+        if (i > 0) track.scrollTo({ left: (i - 1) * track.clientWidth, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        const i = getIndex();
+        if (i < total - 1) track.scrollTo({ left: (i + 1) * track.clientWidth, behavior: 'smooth' });
+      });
+
+      // Init state: on first slide, only show next
+      updateUI(0);
+    }
+
+    initCarousel('track-1', 'dots-1', 'counter-1', 'prev-1', 'next-1', 4);
+    initCarousel('track-2', 'dots-2', 'counter-2', 'prev-2', 'next-2', 4);
+  </script>
 </body>
 </html>
